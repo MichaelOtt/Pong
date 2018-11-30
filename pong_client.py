@@ -14,6 +14,8 @@ p1points = 0
 p2points = 0
 mousey = height/2
 
+def connectToServer():
+	garbage = 0
 def sendInfo(mousey):
 	garbage = 0
 def receiveInfo():
@@ -30,6 +32,7 @@ def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	pygame.draw.rect(surface, (255,255,255), p2)
 	pygame.draw.circle(surface, (255,255,255), (int(ballx), int(bally)), ballradius)
 	
+connectToServer()
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
