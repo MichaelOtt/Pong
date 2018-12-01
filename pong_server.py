@@ -15,13 +15,27 @@ dy = 0
 p1points = 0
 p2points = 0
 
+myIP='127.0.0.1'
+clientAddress=""
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 def connectToClient():#needs to be blocking
-	garbage = 0
+
+	sock.bind((myIP, port))
+	while True:
+		data, clientAddress = sock.recvfrom(1024)
+		if(data=="ready"):
+			break
+	sock.sendto("ready".encode(), clientAddress)
+	print ("Connected!")
+	
+	
 def sendInfo(p1y, p2y, ballx, bally, p1points, p2points):
-	stuff = 0
+	infoString=str(ply)+":"+str(p2y)+":"+str(ballx)+":"+str(bally)+":"+str(p1points)+":"+str(p2points)
+	sock.sendto(infoString.encode(), clientAddress)
 def receiveInfo():
-	mousey = 0
-	return mousey
+	data, addr = sock.recvfrom(1024)
+	return int(data)
 def resetBall():
 	ballx = width/2
 	bally = height/2

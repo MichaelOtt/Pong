@@ -14,13 +14,28 @@ p1points = 0
 p2points = 0
 mousey = height/2
 
-def connectToServer():
-	garbage = 0
+port=9029
+myIP="127.0.0.1"
+serverIP=""
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def connectToServer(ip):
+	sock.sendto("ready".encode(), (ip, port))
+	while True:
+		sock.bind((myIP, port))
+		data, addr = sock.recvfrom(1024)
+		if(data=="ready"):
+			break
+	serverIP=ip
+	print ("Connected!")
+	
 def sendInfo(mousey):
-	garbage = 0
+	sock.sendto(str(mousey).encode(), (serverIP, port))
 def receiveInfo():
 	#return p1y, p2y, ballx, bally, p1points, p2points
-	return 0, 0, 0, 0, 0, 0
+	infostring, addr=sock.recvfrom(1024)
+	values=infostring.split(":")
+	return values[0], values[1], values[2], values[3], values[4], values[5]
 
 def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	surface.fill((0,0,0))
@@ -32,7 +47,8 @@ def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	pygame.draw.rect(surface, (255,255,255), p2)
 	pygame.draw.circle(surface, (255,255,255), (int(ballx), int(bally)), ballradius)
 	
-connectToServer()
+ip=input("What is the IP of the server?")
+connectToServer(ip)
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
