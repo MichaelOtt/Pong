@@ -16,7 +16,6 @@ mousey = height/2
 
 port=9029
 myIP="127.0.0.1"
-serverIP=""
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((myIP, 9028))
 
@@ -29,8 +28,8 @@ def connectToServer(ip, sock):
 	serverIP=ip
 	print ("Connected!")
 	
-def sendInfo(mousey):
-	sock.sendto(str(int(mousey)).encode(), (serverIP, port))
+def sendInfo(mousey, ip):
+	sock.sendto(str(int(mousey)).encode(), (ip, port))
 def receiveInfo():
 	#return p1y, p2y, ballx, bally, p1points, p2points
 	infostring, addr=sock.recvfrom(1024)
@@ -64,7 +63,7 @@ while True:
 		if event.type == MOUSEMOTION:
 			_, mousey = pygame.mouse.get_pos()
 		if event.type == COMEVENT:
-			sendInfo(mousey)
+			sendInfo(mousey, ip)
 			p1y, p2y, ballx, bally, p1points, p2points = receiveInfo()
 			p1.top = p1y
 			p2.top = p2y
