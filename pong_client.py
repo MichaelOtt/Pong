@@ -18,13 +18,13 @@ port=9029
 myIP="127.0.0.1"
 serverIP=""
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((myIP, 9028))
 
 def connectToServer(ip, sock):
 	sock.sendto("ready".encode(), (ip, 9029))
 	while True:
-		sock.bind((myIP, 9028))
 		data, addr = sock.recvfrom(1024)
-		if(data=="ready"):
+		if(data.decode()=="ready"):
 			break
 	serverIP=ip
 	print ("Connected!")
