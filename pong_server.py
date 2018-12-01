@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, socket
 from pygame.locals import *
 
 paddleheight = 50
@@ -21,7 +21,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def connectToClient():#needs to be blocking
 
-	sock.bind((myIP, port))
+	sock.bind((myIP, 9029))
 	while True:
 		data, clientAddress = sock.recvfrom(1024)
 		if(data=="ready"):

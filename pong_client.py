@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, socket
 from pygame.locals import *
 
 paddleheight = 50
@@ -19,10 +19,10 @@ myIP="127.0.0.1"
 serverIP=""
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-def connectToServer(ip):
-	sock.sendto("ready".encode(), (ip, port))
+def connectToServer(ip, sock):
+	sock.sendto("ready".encode(), (ip, 9029))
 	while True:
-		sock.bind((myIP, port))
+		sock.bind((myIP, 9028))
 		data, addr = sock.recvfrom(1024)
 		if(data=="ready"):
 			break
@@ -48,7 +48,7 @@ def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	pygame.draw.circle(surface, (255,255,255), (int(ballx), int(bally)), ballradius)
 	
 ip=input("What is the IP of the server?")
-connectToServer(ip)
+connectToServer(ip, sock)
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
