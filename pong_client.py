@@ -15,7 +15,7 @@ p2points = 0
 mousey = height/2
 
 port=9029
-myIP="127.0.0.1"
+myIP="0.0.0.0"
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((myIP, 9028))
 

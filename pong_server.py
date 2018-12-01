@@ -15,7 +15,7 @@ dy = 0
 p1points = 0
 p2points = 0
 
-myIP='127.0.0.1'
+myIP='0.0.0.0'
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def connectToClient():#needs to be blocking
