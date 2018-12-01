@@ -24,7 +24,7 @@ def connectToClient():#needs to be blocking
 	sock.bind((myIP, 9029))
 	while True:
 		data, clientAddress = sock.recvfrom(1024)
-		if(data=="ready"):
+		if(data.decode()=="ready"):
 			break
 	sock.sendto("ready".encode(), clientAddress)
 	print ("Connected!")
