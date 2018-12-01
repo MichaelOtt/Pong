@@ -16,26 +16,26 @@ p1points = 0
 p2points = 0
 
 myIP='127.0.0.1'
-clientAddress=""
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def connectToClient():#needs to be blocking
 
 	sock.bind((myIP, 9029))
 	while True:
-		data, clientAddress = sock.recvfrom(1024)
+		data, addr = sock.recvfrom(1024)
 		if(data.decode()=="ready"):
 			break
-	sock.sendto("ready".encode(), clientAddress)
+	sock.sendto("ready".encode(), addr)
 	print ("Connected!")
+	return addr
 	
 	
-def sendInfo(p1y, p2y, ballx, bally, p1points, p2points):
-	infoString=str(ply)+":"+str(p2y)+":"+str(ballx)+":"+str(bally)+":"+str(p1points)+":"+str(p2points)
+def sendInfo(p1y, p2y, ballx, bally, p1points, p2points, clientAddress):
+	infoString=str(int(p1y))+":"+str(int(p2y))+":"+str(int(ballx))+":"+str(int(bally))+":"+str(int(p1points))+":"+str(int(p2points))
 	sock.sendto(infoString.encode(), clientAddress)
 def receiveInfo():
 	data, addr = sock.recvfrom(1024)
-	return int(data)
+	return int(data.decode())
 def resetBall():
 	ballx = width/2
 	bally = height/2
@@ -79,14 +79,14 @@ def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	pygame.draw.rect(surface, (255,255,255), p2)
 	pygame.draw.circle(surface, (255,255,255), (int(ballx), int(bally)), ballradius)
 	
-connectToClient()
+clientAddress=connectToClient()
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
 UPDATEEVENT = pygame.USEREVENT+1
 COMEVENT = pygame.USEREVENT+2
 pygame.time.set_timer(UPDATEEVENT, int(1000/120))
-pygame.time.set_timer(COMEVENT, int(1000/10))
+pygame.time.set_timer(COMEVENT, int(1000/100))
 DISPLAYSURF = pygame.display.set_mode((800,600))
 pygame.display.set_caption('Pong!')
 ballx, bally, dx, dy = resetBall()
@@ -101,7 +101,7 @@ while True:
 		if event.type == UPDATEEVENT:
 			ballx, bally, dx, dy, p1points, p2points, p1, p2 = updateState(ballx, bally, ballradius, dx, dy, p1points, p2points, p1, p2)
 		if event.type == COMEVENT:
-			sendInfo(p1.top, p2.top, ballx, bally, p1points, p2points)
+			sendInfo(p1.top, p2.top, ballx, bally, p1points, p2points, clientAddress)
 			p2center = receiveInfo()
 			p2.center = (p2.left+p2.width/2, p2center)
 	draw(DISPLAYSURF, p1, p2, ballx, bally, ballradius, p1points, p2points)

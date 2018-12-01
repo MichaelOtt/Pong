@@ -30,12 +30,12 @@ def connectToServer(ip, sock):
 	print ("Connected!")
 	
 def sendInfo(mousey):
-	sock.sendto(str(mousey).encode(), (serverIP, port))
+	sock.sendto(str(int(mousey)).encode(), (serverIP, port))
 def receiveInfo():
 	#return p1y, p2y, ballx, bally, p1points, p2points
 	infostring, addr=sock.recvfrom(1024)
-	values=infostring.split(":")
-	return values[0], values[1], values[2], values[3], values[4], values[5]
+	values=infostring.decode().split(":")
+	return int(values[0]), int(values[1]), int(values[2]), int(values[3]), int(values[4]), int(values[5])
 
 def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	surface.fill((0,0,0))
@@ -53,7 +53,7 @@ pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
 COMEVENT = pygame.USEREVENT+2
-pygame.time.set_timer(COMEVENT, int(1000/10))
+pygame.time.set_timer(COMEVENT, int(1000/100))
 DISPLAYSURF = pygame.display.set_mode((800,600))
 pygame.display.set_caption('Pong!')
 while True:
@@ -62,7 +62,7 @@ while True:
 			pygame.quit()
 			sys.exit()
 		if event.type == MOUSEMOTION:
-			mousey = pygame.mouse.get_pos()
+			_, mousey = pygame.mouse.get_pos()
 		if event.type == COMEVENT:
 			sendInfo(mousey)
 			p1y, p2y, ballx, bally, p1points, p2points = receiveInfo()
