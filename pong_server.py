@@ -1,4 +1,4 @@
-import pygame, sys, random, socket
+import pygame, sys, random, socket, threading
 from pygame.locals import *
 
 paddleheight = 50
@@ -18,6 +18,8 @@ p2points = 0
 myIP='0.0.0.0'
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+p2center=0
+
 def connectToClient():#needs to be blocking
 
 	sock.bind((myIP, 9029))
@@ -26,6 +28,9 @@ def connectToClient():#needs to be blocking
 		if(data.decode()=="ready"):
 			break
 	sock.sendto("ready".encode(), addr)
+	t=threading.Thread(target=receiveThread)
+	t.start()
+
 	print ("Connected!")
 	return addr
 	
@@ -36,6 +41,10 @@ def sendInfo(p1y, p2y, ballx, bally, p1points, p2points, clientAddress):
 def receiveInfo():
 	data, addr = sock.recvfrom(1024)
 	return int(data.decode())
+def receiveThread():
+	global p2center
+	while True:
+		p2center= receiveInfo()
 def resetBall():
 	ballx = width/2
 	bally = height/2
@@ -102,7 +111,6 @@ while True:
 			ballx, bally, dx, dy, p1points, p2points, p1, p2 = updateState(ballx, bally, ballradius, dx, dy, p1points, p2points, p1, p2)
 		if event.type == COMEVENT:
 			sendInfo(p1.top, p2.top, ballx, bally, p1points, p2points, clientAddress)
-			p2center = receiveInfo()
 			p2.center = (p2.left+p2.width/2, p2center)
 	draw(DISPLAYSURF, p1, p2, ballx, bally, ballradius, p1points, p2points)
 	pygame.display.update()
