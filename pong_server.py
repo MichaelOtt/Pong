@@ -14,6 +14,7 @@ dx = 0
 dy = 0
 p1points = 0
 p2points = 0
+stopflag = False
 
 myIP='0.0.0.0'
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,6 +33,7 @@ def connectToClient():#needs to be blocking
 	t.start()
 
 	print ("Connected!")
+	sock.settimeout(2)
 	return addr
 	
 	
@@ -44,7 +46,14 @@ def receiveInfo():
 def receiveThread():
 	global p2center
 	while True:
-		p2center= receiveInfo()
+		global stopflag
+		if (stopflag == True):
+			break
+		try :
+			p2center= receiveInfo()
+		except:
+			pass
+	print ("Ended Thread")
 def resetBall():
 	ballx = width/2
 	bally = height/2
@@ -102,6 +111,7 @@ ballx, bally, dx, dy = resetBall()
 while True:
 	for event in pygame.event.get():
 		if event.type == QUIT:
+			stopflag = True
 			pygame.quit()
 			sys.exit()
 		if event.type == MOUSEMOTION:

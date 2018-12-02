@@ -13,7 +13,7 @@ bally = 0
 p1points = 0
 p2points = 0
 mousey = height/2
-
+stopflag = False
 
 port=9029
 myIP="0.0.0.0"
@@ -31,6 +31,7 @@ def connectToServer(ip, sock):
 	t=threading.Thread(target=receiveThread)
 	t.start()
 	print ("Connected!")
+	sock.settimeout(2)
 	
 def sendInfo(mousey, ip):
 	sock.sendto(str(int(mousey)).encode(), (ip, port))
@@ -42,8 +43,15 @@ def receiveInfo():
 
 def receiveThread():
 	while True:
+		global stopflag
+		if (stopflag == True):
+			break
 		global p1, p2, ballx, bally, p1points, p2points
-		p1.top, p2.top, ballx, bally, p1points, p2points=receiveInfo()
+		try:
+			p1.top, p2.top, ballx, bally, p1points, p2points=receiveInfo()
+		except:
+			pass
+	print ("Ended Thread")
 
 def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	surface.fill((0,0,0))
@@ -67,6 +75,7 @@ pygame.display.set_caption('Pong!')
 while True:
 	for event in pygame.event.get():
 		if event.type == QUIT:
+			stopflag = True
 			pygame.quit()
 			sys.exit()
 		if event.type == MOUSEMOTION:
