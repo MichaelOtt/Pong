@@ -41,8 +41,9 @@ def receiveInfo():
 	return int(values[0]), int(values[1]), int(values[2]), int(values[3]), int(values[4]), int(values[5])
 
 def receiveThread():
-	global p1, p2, ballx, bally, p1points, p2points
-	p1.top, p2.top, ballx, bally, p1points, p2points=receiveInfo()
+	while True:
+		global p1, p2, ballx, bally, p1points, p2points
+		p1.top, p2.top, ballx, bally, p1points, p2points=receiveInfo()
 
 def draw(surface, p1, p2, ballx, bally, radius, p1points, p2points):
 	surface.fill((0,0,0))
